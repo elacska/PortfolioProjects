@@ -6,3 +6,41 @@ PROJECT 2 - TABLEAU
 The live, interactive dashboard created from this project is published and available on Tableau Public: 
 👉 [Click here to open the interactive COVID-19 Dashboard](https://public.tableau.com/app/profile/eleonora.nyilas/viz/CovidDashboardTutorial_17937957744480/Dashboard1)
 
+# 📊 COVID-19 Interactive Executive Dashboard (Tableau)
+
+## 📌 Project Overview
+This project focuses on translating complex data insights into highly scannable, executive-ready data visualizations. Taking the cleansed and aggregated global datasets generated from the SQL exploration phase, I designed and deployed a live, interactive data presentation system using **Tableau Public**.
+
+The resulting dashboard serves as a functional Business Intelligence tool, enabling stakeholders to interactively filter global parameters, map historical geographic spreads, and track runtime infection speeds across multiple global regions simultaneously.
+
+---
+
+## 🛠️ Visual & Technical Features Demonstrated
+*   **Interactive Controls:** Global Year/Month filters, automated country multi-selection parameters.
+*   **Geographic Choropleth Maps:** Color-density mapping synced with continuous data scales to illustrate macro-level virus distribution.
+*   **Time-Series Continuity:** Transforming discrete date blocks into fluid continuous timelines to monitor regional wave peaks.
+*   **Executive KPI Cards:** Consolidated summary blocks indicating worldwide metrics instantly.
+
+---
+
+## 🚀 Dynamic Visual Fixes & Data Normalization
+
+### 1. Rectifying Aggregation Outliers (`SUM` vs. `MAX` Logic)
+*   **The Visual Bug:** Early configurations of the time-series charts plotted catastrophic infection rates spiking up to 400-500% per country. This occurred because Tableau defaults to auto-aggregating daily metrics using `SUM()`.
+*   **The Technical Fix:** Reconfigured the structural shelf measures to calculate using a strict **`MAX()`** aggregation. Since the data tracks the cumulative progress of infections, capturing the maximum recorded calculation per day instantly normalized the metric axes back down to realistic thresholds (0-15%).
+
+### 2. Time-Series Continuity Optimization
+*   **The Visualization Challenge:** Standard date groupings segmented charts into disjointed blocks, breaking the natural visual flow of wave trajectories.
+*   **The Fix:** Altered the date dimension pills from discrete parts into a **Continuous Month Timeline**, allowing multi-year charts (spanning March 2020 through May 2021) to project a smooth, flowing linear regression curve.
+
+---
+
+## 📊 Live Interactive Dashboard
+The live, fully functional, and interactive visualization dashboard has been deployed to the cloud:
+
+👉 **[Click Here to Open the Live COVID-19 Tableau Dashboard](https://tableau.com)**
+
+***
+
+*Note: A preview screenshot illustrating the final visual dashboard layout can be viewed directly within the `Dashboard 1.png` file in this repository.*
+
