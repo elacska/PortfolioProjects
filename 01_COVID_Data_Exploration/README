@@ -1,0 +1,49 @@
+# 🦠 COVID-19 Data Exploration Portfolio Project (PostgreSQL)
+
+## 📌 Project Overview
+This project focuses on the comprehensive **Data Exploration and Analysis** of global COVID-19 statistics. While the original bootcamp tutorial by Alex The Analyst was developed using Microsoft SQL Server, this repository showcases a full migration, optimization, and implementation natively within **PostgreSQL (pgAdmin 4)**.
+
+The primary objective of this project was to take raw, un-summarized global epidemiological data and transform it into highly structured, aggregated metrics (KPIs). These transformations lay the groundwork for subsequent extraction into Business Intelligence tools (such as Tableau or Power BI) to generate executive-ready performance reporting dashboards.
+
+---
+
+## 🛠️ Tech Stack & Skills Demonstrated
+*   **Database Engine:** PostgreSQL (pgAdmin 4)
+*   **SQL Concepts Used:** Data Aggregations, Inner Joins, Window Functions, Subqueries, Common Table Expressions (CTEs), Temp Tables, Permanent Database Views.
+*   **Data Exploration Skills:** Advanced multi-table data splicing, logic-based query optimization, conditional indexing, handling scale-based duplicates.
+
+---
+
+## 🚀 Key Analytical Milestones & SQL Architecture
+
+### 1. Initial Ingestion Audit & Data Integrity Control
+*   **The Ingestion Trap:** The raw dataset routinely inputs continent-level summaries (e.g., *Europe*, *World*) directly into the `location` column. Failing to handle this would result in massive duplicate calculations in global numbers.
+*   **The Solution:** Implemented a non-negotiable `WHERE continent IS NOT NULL` filter across basic queries to isolate country-level data. Enforced positional sorting (`ORDER BY 1,2`) to keep chronological time-series clean for every country. Applied PostgreSQL-native `ILIKE` for case-insensitive pattern matching instead of the standard `LIKE` operator.
+
+### 2. Country-Level Mortality & Infection Trajectories
+*   **Case Fatality Rate (CFR):** Engineered the calculated field `(total_deaths / total_cases) * 100` as `DeathPercentage` to gauge the dynamic likelihood of dying if infected over time.
+*   **Infection Penetration Rate:** Calculated `(total_cases / population) * 100` as `PercentPopulationInfected` to monitor historical virus prevalence per country. Used `MAX()` tied with a strict `GROUP BY location` to identify which global regions suffered the highest infection peaks relative to their population size.
+
+### 3. Continental Data Inversions & Global Aggregations
+*   Inverted the structural filter (`WHERE continent IS NULL`) to systematically bypass country-level records, targeting the true standalone continental and global metrics natively.
+*   Aggregated cumulative daily metrics using `SUM(new_cases)` and `SUM(new_deaths)` to calculate humanity's total infection counts and death tolls during the observed period.
+
+### 4. Cumulative Vaccination Stratification (Window Functions)
+*   **The Analytical Goal:** Track day-to-day incremental deployment of vaccines per country dynamically over time.
+*   **The Query Construction:** Built an analytical **Window Function** to compute runtime rolling totals:
+    ```sql
+    SUM(vac.new_vaccinations) OVER (PARTITION BY dea.location ORDER BY dea.location, dea.date) as RollingPeopleVaccinated
+    ```
+    *   `PARTITION BY dea.location`: Automatically flushes the calculator memory and resets to 0 the moment the script crosses over to a new sovereign territory.
+    *   `ORDER BY dea.location, dea.date`: Enforces the data to follow a strict chronological timeline, preventing out-of-order numerical stacking.
+
+---
+
+## 🧠 Advanced Problem-Solving: Overcoming SQL Evaluation Order
+An absolute technical constraint within SQL parsing is that **you cannot reuse a newly created alias (like `RollingPeopleVaccinated`) inside the exact same `SELECT` block for subsequent calculations** (e.g., dividing it by population to get a vaccination rate). The database engine evaluates these steps concurrently. 
+
+To overcome this execution bottleneck, I implemented **three advanced architectural workarounds** to isolate the data operations chronologically:
+
+1.  **The CTE Approach (`WITH PopvsVac`):** Created a memory-resident virtual boundary. By capturing the initial rolling metrics inside the CTE scope first, the outer `SELECT` query was able to seamlessly divide the newly stabilized column by population.
+2.  **The Temp Table Solution (`CREATE TEMP TABLE ...`):** Provisioned an ephemeral table directly onto the scratch memory, loading the computed figures using `INSERT INTO`. This approach simulates enterprise-grade query performance optimization for processing heavy big-data pipelines.
+3.  **The Database View Solution (`CREATE VIEW ...`):** Developed a permanent virtual reference schema saved within pgAdmin. This provides a clean, zero-storage semantic layer that downstream visualization tools (like Tableau) can query directly without re-running long backend calculations.
