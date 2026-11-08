@@ -8,6 +8,8 @@ The live, interactive dashboard created from this project is published and avail
 👉 [Click here to open the interactive COVID-19 Dashboard](https://public.tableau.com/app/profile/eleonora.nyilas/viz/CovidDashboardTutorial_17937957744480/Dashboard1)
 
 
+PROJECT 3 - DATA CELANING
+
 Project 3 - Nashville Housing Data Cleaning (PostgreSQL)
 
 ## 📌 Project Overview
